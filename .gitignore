@@ -1,0 +1,35 @@
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Library/
+Build/
+Logs/
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+obj/
+*.svd
+*.userprefs
+*.pidb
+*.suo
+/*.sln
+*.user
+*.unityproj
+*.booproj
+.vs/
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+UserSettings/EditorUserSettings.asset
+UserSettings/Layouts/default-2021.dwlt
