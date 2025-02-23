@@ -45,6 +45,9 @@ public class TestAnimation : MonoBehaviour {
             _ragdollTransforms[i] = new SimpleTransform();
             _standupTransforms[i] = new SimpleTransform();
         }
+        foreach (var col in _ragdollColliders) {
+            Physics.IgnoreCollision(GetComponent<CapsuleCollider>(), col);
+        }
         runPrev = run;
         ragdollPrev = false;
         if (!ragdoll)
@@ -141,6 +144,7 @@ public class TestAnimation : MonoBehaviour {
     }
 
     public void EnableRagdoll() {
+        ragdoll = true;
         _animator.enabled = false;
         _rigidbody.isKinematic = true;
         _animator.Play("Ragdoll");
@@ -148,21 +152,16 @@ public class TestAnimation : MonoBehaviour {
         foreach (var rbody in _ragdollRBodies) {
             rbody.isKinematic = false;
         }
-        foreach (var col in _ragdollColliders) {
-            col.enabled = true;
-        }
         GetComponent<CapsuleCollider>().enabled = false;
         elapsedRagdollReset = 0f;
     }
 
     public void DisableRagdoll() {
+        ragdoll = false;
         _animator.enabled = true;
         _rigidbody.isKinematic = false;
         foreach (var rbody in _ragdollRBodies) {
             rbody.isKinematic = true;
-        }
-        foreach (var col in _ragdollColliders) {
-            col.enabled = false;
         }
         GetComponent<CapsuleCollider>().enabled = true;
     }
