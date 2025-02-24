@@ -14,15 +14,7 @@ public class FootIKPlacement : MonoBehaviour {
         _animator = GetComponent<Animator>();
     }
 
-    public void EnableFootIK() {
-        ikEnabled = true;
-    }
-
-    public void DisableFootIK() {
-        ikEnabled = false;
-    }
-
-    void SetFootIKTransform(AvatarIKGoal ikGoal) {
+    private void SetFootIKTransform(AvatarIKGoal ikGoal) {
         Vector3 footPos = _animator.GetIKPosition(ikGoal) + Vector3.down * rayYOffset;
         Debug.DrawRay(footPos, Vector3.down * rayDistance, Color.red);
 
@@ -38,7 +30,7 @@ public class FootIKPlacement : MonoBehaviour {
         }
     }
 
-    void OnAnimatorIK(int layerIndex) {
+    private void OnAnimatorIK(int layerIndex) {
         if (ikEnabled) {
             _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1f);
             _animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 0.5f);
@@ -56,5 +48,13 @@ public class FootIKPlacement : MonoBehaviour {
             _animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 0f);
             _animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, 0f);
         }
+    }
+
+    public void EnableFootIK() {
+        ikEnabled = true;
+    }
+
+    public void DisableFootIK() {
+        ikEnabled = false;
     }
 }
