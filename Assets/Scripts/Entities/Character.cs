@@ -6,59 +6,46 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
+public enum CharacterType {
+    Action,
+    Shooter
+}
+
 public class Character : MonoBehaviour
 {
+    [Header("Movements")]
     public float acceleration = 20f;
     public float deceleration = 25f;
     public float maxSpeed = 3f;
     public float maxSprintSpeed = 4.5f;
     public float rotationSpeed = 12f;
     public bool movement360 = false;
-    public PlayerActions playerActions;
 
-    [SerializeField]
+    [Header("Tracking")]
+    public float trackYawMin = -20f;
+    public float trackYawMax = 50f;
+    public float trackSpeed = 30f;
+    public GameObject aimTarget;
+
+    [Header("Character")]
+    public CharacterType charType = CharacterType.Action;
+
     private float currentMaxSpeed = 0f;
-    [SerializeField]
     private float desiredSpeed = 0f;
-    [SerializeField]
     private Vector3 desiredDir = Vector3.zero;
-    [SerializeField]
     private Vector3 moveDir = Vector3.zero;
 
+    private Vector3 aimDir = Vector3.forward;
 
     Animator _animator;
 
     private void Awake() {
         _animator = GetComponent<Animator>();
         currentMaxSpeed = maxSpeed;
-        playerActions = new PlayerActions();
     }
 
-    void Update() {
-        if (playerActions.Battle.Sprint.IsPressed()) {
-            currentMaxSpeed = maxSprintSpeed;
-        }
-        else {
-            currentMaxSpeed = maxSpeed;
-        }
-        Vector2 moveInput = playerActions.Battle.Move.ReadValue<Vector2>();
-        Vector3 camForward = Camera.main.transform.forward;
-        camForward.y = 0f;
-        camForward = camForward.normalized;
-        Vector3 camRight = Camera.main.transform.right;
-        camRight.y = 0f;
-        camRight = camRight.normalized;
-        Vector3 wantDir = (camForward * moveInput.y + camRight * moveInput.x).normalized;
-        SetDesiredDirection(wantDir.x, wantDir.z);
+    private void FixedUpdate() {
         ProcessMove();
-    }
-
-    private void OnEnable() {
-        playerActions.Battle.Enable();
-    }
-
-    private void OnDisable() {
-        playerActions.Battle.Disable();
     }
 
     private void ProcessMove() {
@@ -104,5 +91,39 @@ public class Character : MonoBehaviour
         desiredDir.x = worldDirX;
         desiredDir.z = worldDirZ;
         desiredDir = desiredDir.normalized;
+    }
+
+    public void SetAimTo(Vector3 worldPosition) {
+        Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
+        Vector3 projXZ = Vector3.ProjectOnPlane(localPosition.normalized, Vector3.up);
+        float targetYaw = Mathf.Clamp(Vector3.Angle(projXZ, Vector3.forward) * Mathf.Sign(projXZ.x), trackYawMin, trackYawMax);
+        float targetPitch = Vector3.Angle(localPosition.normalized, projXZ) * Mathf.Sign(localPosition.y);
+        Vector3 rotatedForward = Quaternion.Euler(-targetPitch, targetYaw, 0) * Vector3.forward;
+        if (aimTarget != null) {
+            Vector3 currentAimTargetDir = aimTarget.transform.localPosition.normalized;
+            currentAimTargetDir = Vector3.RotateTowards(currentAimTargetDir, rotatedForward, trackSpeed * Time.deltaTime, 0f);
+            aimTarget.transform.localPosition = currentAimTargetDir * localPosition.magnitude;
+        }
+
+        if (movement360) {
+            Vector3 characterForward = Vector3.RotateTowards(transform.forward, Vector3.ProjectOnPlane(worldPosition - transform.position, Vector3.up), rotationSpeed * Time.deltaTime, 0f);
+            transform.forward = characterForward;
+        }
+    }
+
+
+    public void SetSprint(bool isSprinting) {
+        if (isSprinting)
+            currentMaxSpeed = maxSprintSpeed;
+        else
+            currentMaxSpeed = maxSpeed;
+    }
+
+    public void SetAim(bool isAiming) {
+        _animator.SetBool("Aiming", isAiming);
+    }
+
+    public void SetFiring(bool isFiring) {
+        _animator.SetBool("Firing", isFiring);
     }
 }
