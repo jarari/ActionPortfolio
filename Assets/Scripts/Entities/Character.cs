@@ -24,24 +24,27 @@ public class Character : MonoBehaviour
     [Header("Tracking")]
     public float trackYawMin = -20f;
     public float trackYawMax = 50f;
-    public float trackSpeed = 30f;
+    public float trackTime = 0.1f;
     public GameObject aimTarget;
+    public GameObject aimBase;
 
     [Header("Character")]
     public CharacterType charType = CharacterType.Action;
 
-    private float currentMaxSpeed = 0f;
-    private float desiredSpeed = 0f;
-    private Vector3 desiredDir = Vector3.zero;
-    private Vector3 moveDir = Vector3.zero;
+    private float _currentMaxSpeed = 0f;
+    private float _desiredSpeed = 0f;
+    private Vector3 _desiredDir = Vector3.zero;
+    private Vector3 _moveDir = Vector3.zero;
 
-    private Vector3 aimDir = Vector3.forward;
+    private Vector3 _previousAimDir = Vector3.forward;
+
+    private bool _isReloading = false;
 
     Animator _animator;
 
     private void Awake() {
         _animator = GetComponent<Animator>();
-        currentMaxSpeed = maxSpeed;
+        _currentMaxSpeed = maxSpeed;
     }
 
     private void FixedUpdate() {
@@ -49,23 +52,23 @@ public class Character : MonoBehaviour
     }
 
     private void ProcessMove() {
-        if (desiredDir.magnitude > 0f) {
-            if (desiredSpeed < currentMaxSpeed) {
-                desiredSpeed = Mathf.Min(desiredSpeed + acceleration * Time.deltaTime, currentMaxSpeed);
+        if (_desiredDir.magnitude > 0f) {
+            if (_desiredSpeed < _currentMaxSpeed) {
+                _desiredSpeed = Mathf.Min(_desiredSpeed + acceleration * Time.deltaTime, _currentMaxSpeed);
             }
-            else if (desiredSpeed > currentMaxSpeed) {
-                desiredSpeed = Mathf.Max(desiredSpeed - deceleration * Time.deltaTime, currentMaxSpeed);
+            else if (_desiredSpeed > _currentMaxSpeed) {
+                _desiredSpeed = Mathf.Max(_desiredSpeed - deceleration * Time.deltaTime, _currentMaxSpeed);
             }
-            moveDir = Vector3.ClampMagnitude(
-                moveDir + desiredDir * acceleration * Time.deltaTime,
-                desiredSpeed);
+            _moveDir = Vector3.ClampMagnitude(
+                _moveDir + _desiredDir * acceleration * Time.deltaTime,
+                _desiredSpeed);
         }
         else {
-            desiredSpeed = Mathf.Max(moveDir.magnitude - deceleration * Time.deltaTime, 0f);
-            moveDir = Vector3.ClampMagnitude(moveDir, desiredSpeed);
+            _desiredSpeed = Mathf.Max(_moveDir.magnitude - deceleration * Time.deltaTime, 0f);
+            _moveDir = Vector3.ClampMagnitude(_moveDir, _desiredSpeed);
         }
 
-        float currentSpeed = moveDir.magnitude;
+        float currentSpeed = _moveDir.magnitude;
         if (currentSpeed > 0) {
             if (_animator.GetInteger("State") == 0) {
                 _animator.SetInteger("State", 1);
@@ -79,18 +82,18 @@ public class Character : MonoBehaviour
         _animator.SetFloat("Speed", currentSpeed);
 
         if (!movement360) {
-            Vector3 rotatedForward = Vector3.RotateTowards(transform.forward, moveDir, rotationSpeed * Time.deltaTime, 0f);
+            Vector3 rotatedForward = Vector3.RotateTowards(transform.forward, _moveDir, rotationSpeed * Time.deltaTime, 0f);
             transform.forward = rotatedForward;
         }
-        Vector3 localMoveDir = transform.InverseTransformDirection(moveDir);
-        _animator.SetFloat("Horizontal", localMoveDir.x);
-        _animator.SetFloat("Vertical", localMoveDir.z);
+        Vector3 local_moveDir = transform.InverseTransformDirection(_moveDir);
+        _animator.SetFloat("Horizontal", local_moveDir.x);
+        _animator.SetFloat("Vertical", local_moveDir.z);
     }
 
     public void SetDesiredDirection(float worldDirX, float worldDirZ) {
-        desiredDir.x = worldDirX;
-        desiredDir.z = worldDirZ;
-        desiredDir = desiredDir.normalized;
+        _desiredDir.x = worldDirX;
+        _desiredDir.z = worldDirZ;
+        _desiredDir = _desiredDir.normalized;
     }
 
     public void SetAimTo(Vector3 worldPosition) {
@@ -99,24 +102,31 @@ public class Character : MonoBehaviour
         float targetYaw = Mathf.Clamp(Vector3.Angle(projXZ, Vector3.forward) * Mathf.Sign(projXZ.x), trackYawMin, trackYawMax);
         float targetPitch = Vector3.Angle(localPosition.normalized, projXZ) * Mathf.Sign(localPosition.y);
         Vector3 rotatedForward = Quaternion.Euler(-targetPitch, targetYaw, 0) * Vector3.forward;
-        if (aimTarget != null) {
-            Vector3 currentAimTargetDir = aimTarget.transform.localPosition.normalized;
-            currentAimTargetDir = Vector3.RotateTowards(currentAimTargetDir, rotatedForward, trackSpeed * Time.deltaTime, 0f);
-            aimTarget.transform.localPosition = currentAimTargetDir * localPosition.magnitude;
+        if (aimTarget != null && aimBase != null) {
+            Vector3 localBasePos = transform.InverseTransformPoint(aimBase.transform.position);
+            Vector3 targetPos = localBasePos + Vector3.ClampMagnitude(rotatedForward * localPosition.magnitude - localBasePos, 10f);
+            aimTarget.transform.localPosition = Vector3.SmoothDamp(aimTarget.transform.localPosition, targetPos, ref _previousAimDir, trackTime);
         }
 
         if (movement360) {
+            Vector3 prevAimPos = aimTarget.transform.position;
+            if (aimTarget != null) {
+                prevAimPos = aimTarget.transform.position;
+            }
             Vector3 characterForward = Vector3.RotateTowards(transform.forward, Vector3.ProjectOnPlane(worldPosition - transform.position, Vector3.up), rotationSpeed * Time.deltaTime, 0f);
             transform.forward = characterForward;
+            if (aimTarget != null) {
+                aimTarget.transform.position = prevAimPos;
+            }
         }
     }
 
 
     public void SetSprint(bool isSprinting) {
         if (isSprinting)
-            currentMaxSpeed = maxSprintSpeed;
+            _currentMaxSpeed = maxSprintSpeed;
         else
-            currentMaxSpeed = maxSpeed;
+            _currentMaxSpeed = maxSpeed;
     }
 
     public void SetAim(bool isAiming) {
@@ -124,6 +134,23 @@ public class Character : MonoBehaviour
     }
 
     public void SetFiring(bool isFiring) {
-        _animator.SetBool("Firing", isFiring);
+        if (!_isReloading)
+            _animator.SetBool("Firing", isFiring);
+    }
+
+    public void DoReload() {
+        if (!_isReloading)
+            _animator.SetTrigger("Reload");
+    }
+
+    public void ProcessAnimationEvent(string animEvent) {
+        string[] args = animEvent.Split(".");
+        if (args[0] == "ReloadStart") {
+            SetFiring(false);
+            _isReloading = true;
+        }
+        else if (args[0] == "ReloadEnd") {
+            _isReloading = false;
+        }
     }
 }
