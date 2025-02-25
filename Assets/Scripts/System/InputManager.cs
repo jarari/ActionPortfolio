@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour {
     public PlayerActions playerActions;
@@ -53,6 +54,12 @@ public class InputManager : MonoBehaviour {
 
             Vector3 aimPos = camController.RaycastForward();
             characterInControl.SetAimTo(aimPos);
+        }
+    }
+
+    private void OnReload(InputValue val) {
+        if (characterInControl != null) {
+            characterInControl.DoReload();
         }
     }
 }

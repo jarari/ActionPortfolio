@@ -71,6 +71,15 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""9f3ba00f-eb8b-44df-8671-93f3e506ce6b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -227,6 +236,17 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""action"": ""Fire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3138da9f-5561-4d68-a63f-ff4e146d4401"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -262,6 +282,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         m_Battle_Look = m_Battle.FindAction("Look", throwIfNotFound: true);
         m_Battle_Fire = m_Battle.FindAction("Fire", throwIfNotFound: true);
         m_Battle_Aim = m_Battle.FindAction("Aim", throwIfNotFound: true);
+        m_Battle_Reload = m_Battle.FindAction("Reload", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -328,6 +349,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Battle_Look;
     private readonly InputAction m_Battle_Fire;
     private readonly InputAction m_Battle_Aim;
+    private readonly InputAction m_Battle_Reload;
     public struct BattleActions
     {
         private @PlayerActions m_Wrapper;
@@ -337,6 +359,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Battle_Look;
         public InputAction @Fire => m_Wrapper.m_Battle_Fire;
         public InputAction @Aim => m_Wrapper.m_Battle_Aim;
+        public InputAction @Reload => m_Wrapper.m_Battle_Reload;
         public InputActionMap Get() { return m_Wrapper.m_Battle; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -361,6 +384,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Aim.started += instance.OnAim;
             @Aim.performed += instance.OnAim;
             @Aim.canceled += instance.OnAim;
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
         }
 
         private void UnregisterCallbacks(IBattleActions instance)
@@ -380,6 +406,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Aim.started -= instance.OnAim;
             @Aim.performed -= instance.OnAim;
             @Aim.canceled -= instance.OnAim;
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
         }
 
         public void RemoveCallbacks(IBattleActions instance)
@@ -413,5 +442,6 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
     }
 }
