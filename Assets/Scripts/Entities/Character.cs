@@ -37,6 +37,7 @@ public class Character : MonoBehaviour
     private Vector3 _moveDir = Vector3.zero;
 
     private Vector3 _previousAimDir = Vector3.forward;
+    private Vector3 _actualAimPos = Vector3.zero;
 
     private bool _isReloading = false;
 
@@ -120,6 +121,7 @@ public class Character : MonoBehaviour
                 aimTarget.transform.position = prevAimPos;
             }
         }
+        _actualAimPos = worldPosition;
     }
 
 
@@ -155,7 +157,7 @@ public class Character : MonoBehaviour
         }
         else if (args[0] == "WeaponFire") {
             if (_weapon != null) {
-                _weapon.FireProjectile();
+                _weapon.FireProjectile(_actualAimPos);
             }
         }
     }
