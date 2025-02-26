@@ -43,10 +43,17 @@ public class CamController : MonoBehaviour {
 
     private void PositionCamera() {
         Vector3 camTargetPos = new Vector3(armOffsetXY.x, armOffsetXY.y, -armLength);
-        Debug.DrawLine(transform.position, transform.position - transform.forward * armLength, Color.red);
-        if (Physics.Raycast(transform.TransformPoint(armOffsetXY), -transform.forward, out var hit, armLength, collisionLayer)) {
-            Vector3 diff = hit.point - transform.position;
-            camTargetPos = transform.InverseTransformDirection(diff.normalized) * (hit.distance - marginOnHit);
+        Vector3 camFrom = transform.TransformPoint(armOffsetXY);
+        RaycastHit hitInfo;
+        if (Physics.Raycast(transform.position, (camFrom - transform.position).normalized, out hitInfo, armOffsetXY.magnitude, collisionLayer)) {
+            Debug.DrawLine(transform.position, hitInfo.point);
+            Vector3 diff = hitInfo.point - transform.position;
+            camTargetPos = transform.InverseTransformDirection(diff.normalized) * (hitInfo.distance - marginOnHit);
+        }
+        else if (Physics.Raycast(camFrom, -transform.forward, out hitInfo, armLength, collisionLayer)) {
+            Debug.DrawLine(camFrom, hitInfo.point);
+            Vector3 diff = hitInfo.point - transform.position;
+            camTargetPos = transform.InverseTransformDirection(diff.normalized) * (hitInfo.distance - marginOnHit);
         }
         _camera.transform.localPosition = camTargetPos;
     }
