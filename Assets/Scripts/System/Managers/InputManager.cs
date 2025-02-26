@@ -4,11 +4,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour {
+    public static InputManager instance;
     public PlayerActions playerActions;
     public Character characterInControl;
     public CamController camController;
 
     private void Awake() {
+        if (instance != null) {
+            Destroy(this);
+            return;
+        }
         playerActions = new PlayerActions();
     }
 
