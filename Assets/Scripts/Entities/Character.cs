@@ -41,6 +41,7 @@ public class Character : MonoBehaviour
     private bool _isReloading = false;
 
     Animator _animator;
+    Weapon _weapon;
 
     private void Awake() {
         _animator = GetComponent<Animator>();
@@ -152,5 +153,14 @@ public class Character : MonoBehaviour
         else if (args[0] == "ReloadEnd") {
             _isReloading = false;
         }
+        else if (args[0] == "WeaponFire") {
+            if (_weapon != null) {
+                _weapon.FireProjectile();
+            }
+        }
+    }
+
+    public void EquipWeapon(Weapon wep) {
+        _weapon = wep;
     }
 }
