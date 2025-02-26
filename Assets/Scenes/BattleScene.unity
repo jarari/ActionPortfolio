@@ -3350,7 +3350,7 @@ MonoBehaviour:
   aimDistance: 1000
   aimLayer:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 51
 --- !u!1 &1730311080
 GameObject:
   m_ObjectHideFlags: 0
