@@ -575,7 +575,7 @@ MonoBehaviour:
   - material: {fileID: 13400000, guid: a480ec091cbfaf440906d853aa491716, type: 2}
     effectAsset: {fileID: 8926484042661614526, guid: 8206dafe1c8223445871924cf040a4b7, type: 3}
   - material: {fileID: 13400000, guid: 9c8703607a917d546a3aad4be66a75c4, type: 2}
-    effectAsset: {fileID: 0}
+    effectAsset: {fileID: 8926484042661614526, guid: a78bbfbf67648b9409593a0b0325518c, type: 3}
 --- !u!1 &364135458
 GameObject:
   m_ObjectHideFlags: 0
@@ -3219,7 +3219,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1516297543}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 9c8703607a917d546a3aad4be66a75c4, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -5002,8 +5002,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 6329867723466079701}
+  projectileNode: {fileID: 2147022285}
   muzzleflash: {fileID: 219932051}
   wepType: 1
+  tempLayer:
+    serializedVersion: 2
+    m_Bits: 23
 --- !u!1 &919132148637559681
 GameObject:
   m_ObjectHideFlags: 0
@@ -12725,7 +12729,7 @@ GameObject:
   - component: {fileID: 9068224027836854088}
   - component: {fileID: 9068224027836854086}
   - component: {fileID: 9068224027836854085}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Zombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
