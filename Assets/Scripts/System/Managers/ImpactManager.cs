@@ -67,7 +67,6 @@ public class ImpactManager : MonoBehaviour {
 
     private void OnReturnedToPool(VisualEffect vfx) {
         vfx.gameObject.SetActive(false);
-        Debug.Log("Returned to pool: " + vfx.name);
     }
 
     private void OnTakeFromPool(VisualEffect vfx) {
