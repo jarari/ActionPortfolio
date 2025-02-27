@@ -24,8 +24,10 @@ public class Weapon : MonoBehaviour {
         if (wepType == WeaponType.Gun)
             muzzleflash.Play();
 
-        if (Physics.Raycast(projectileNode.transform.position, (targetPos - projectileNode.transform.position).normalized, out var hit, 1000f, tempLayer)) {
+        Vector3 rayDir = (targetPos - projectileNode.transform.position).normalized;
+        if (Physics.Raycast(projectileNode.transform.position, rayDir, out var hit, 1000f, tempLayer)) {
             ImpactManager.instance.SpawnImpactEffect(hit.point, hit.normal, hit.collider.sharedMaterial);
+            DecalManager.instance.SpawnImpactDecal(hit.point - rayDir * 0.5f, rayDir, hit.collider.sharedMaterial, hit.collider.transform);
         }
     }
 }
