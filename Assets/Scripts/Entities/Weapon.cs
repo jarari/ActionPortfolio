@@ -12,6 +12,7 @@ public class Weapon : MonoBehaviour {
     public Character owner;
     public GameObject projectileNode;
     public MuzzleFlash muzzleflash;
+    public ParticleSystem casing;
     public WeaponType wepType;
     public LayerMask tempLayer;
 
@@ -21,8 +22,14 @@ public class Weapon : MonoBehaviour {
     }
 
     public void FireProjectile(Vector3 targetPos) {
-        if (wepType == WeaponType.Gun)
-            muzzleflash.Play();
+        if (wepType == WeaponType.Gun) {
+            if (muzzleflash != null) {
+                muzzleflash.Play();
+            }
+            if (casing != null) {
+                casing.Emit(1);
+            }
+        }
 
         Vector3 rayDir = (targetPos - projectileNode.transform.position).normalized;
         if (Physics.Raycast(projectileNode.transform.position, rayDir, out var hit, 1000f, tempLayer)) {
