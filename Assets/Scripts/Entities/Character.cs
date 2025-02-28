@@ -6,13 +6,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
-public enum CharacterType {
-    Action,
-    Shooter
-}
 
 public class Character : MonoBehaviour
 {
+
     [Header("Movements")]
     public float acceleration = 20f;
     public float deceleration = 25f;
@@ -30,7 +27,7 @@ public class Character : MonoBehaviour
     public GameObject aimBase;
 
     [Header("Character")]
-    public CharacterType charType = CharacterType.Action;
+    public CharacterData data;
 
     private float _currentMaxSpeed = 0f;
     private float _desiredSpeed = 0f;
