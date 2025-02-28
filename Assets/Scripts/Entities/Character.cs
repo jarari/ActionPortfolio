@@ -11,17 +11,8 @@ public enum CharacterType {
     Shooter
 }
 
-public struct CharacterStats {
-    public float CurrentHP;
-    public float MaxHP;
-    public float Defense;
-}
-
 public class Character : MonoBehaviour
 {
-    [Serializable]
-    public CharacterStats stats;
-
     [Header("Movements")]
     public float acceleration = 20f;
     public float deceleration = 25f;
