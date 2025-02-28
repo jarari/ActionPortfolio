@@ -20,6 +20,7 @@ public class Character : MonoBehaviour
     public float maxSprintSpeed = 4.5f;
     public float rotationSpeed = 12f;
     public bool movement360 = false;
+    public bool hasDirectionalMovement = true;
 
     [Header("Tracking")]
     public float trackYawMin = -20f;
@@ -87,9 +88,12 @@ public class Character : MonoBehaviour
             Vector3 rotatedForward = Vector3.RotateTowards(transform.forward, _moveDir, rotationSpeed * Time.deltaTime, 0f);
             transform.forward = rotatedForward;
         }
-        Vector3 local_moveDir = transform.InverseTransformDirection(_moveDir);
-        _animator.SetFloat("Horizontal", local_moveDir.x);
-        _animator.SetFloat("Vertical", local_moveDir.z);
+
+        if (hasDirectionalMovement) {
+            Vector3 local_moveDir = transform.InverseTransformDirection(_moveDir);
+            _animator.SetFloat("Horizontal", local_moveDir.x);
+            _animator.SetFloat("Vertical", local_moveDir.z);
+        }
     }
 
     public void SetDesiredDirection(float worldDirX, float worldDirZ) {
