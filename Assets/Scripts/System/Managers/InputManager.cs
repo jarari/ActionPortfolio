@@ -6,14 +6,16 @@ using UnityEngine.InputSystem;
 public class InputManager : MonoBehaviour {
     public static InputManager instance;
     public PlayerActions playerActions;
-    public Character characterInControl;
     public CamController camController;
+
+    private Character characterInControl;
 
     private void Awake() {
         if (instance != null) {
             Destroy(this);
             return;
         }
+        instance = this;
         playerActions = new PlayerActions();
     }
 
@@ -66,5 +68,9 @@ public class InputManager : MonoBehaviour {
         if (characterInControl != null) {
             characterInControl.DoReload();
         }
+    }
+
+    public void SetCharacterInControl(Character character) {
+        characterInControl = character;
     }
 }

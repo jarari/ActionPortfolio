@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CamController : MonoBehaviour {
     [Header("Camera Following")]
-    public GameObject camTarget;
     public Vector3 camTargetOffset = new Vector3(0, 1.6f, 0);
     public float camPitchMin = -45f;
     public float camPitchMax = 45f;
@@ -24,6 +23,7 @@ public class CamController : MonoBehaviour {
     public LayerMask aimLayer;
 
     private Camera _camera;
+    private GameObject camTarget;
 
     void Awake() {
         _camera = GetComponentInChildren<Camera>();
@@ -68,5 +68,9 @@ public class CamController : MonoBehaviour {
         if (Physics.Raycast(_camera.transform.position + _camera.transform.forward * 1f, _camera.transform.forward, out var hit, aimDistance, aimLayer))
             targetPos = hit.point;
         return targetPos;
+    }
+
+    public void SetCameraTarget(GameObject target) {
+        camTarget = target;
     }
 }
