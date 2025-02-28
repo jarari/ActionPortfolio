@@ -11,7 +11,7 @@ public class Weapon : MonoBehaviour {
     public Character owner;
     public GameObject projectileNode;
     public MuzzleFlash muzzleflash;
-    public ParticleSystem casing;
+    public GameObject casingNode;
     public WeaponType wepType;
     public LayerMask tempLayer;
 
@@ -25,8 +25,10 @@ public class Weapon : MonoBehaviour {
             if (muzzleflash != null) {
                 muzzleflash.Play();
             }
-            if (casing != null) {
-                casing.Emit(1);
+            if (casingNode != null) {
+                Vector3 spread = new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.4f, 0.4f), Random.Range(-0.1f, 0.1f));
+                Vector3 velocity = (casingNode.transform.forward + casingNode.transform.InverseTransformVector(spread)).normalized * Random.Range(2.5f, 4f) + owner.GetComponent<Rigidbody>().velocity;
+                DebrisManager.instance.SpawnTempDebris(casingNode.transform.position, casingNode.transform.rotation, velocity, 5f);
             }
             BulletManager.instance.SpawnBullet(projectileNode.transform.position, (targetPos - projectileNode.transform.position), 100f, true);
         }
