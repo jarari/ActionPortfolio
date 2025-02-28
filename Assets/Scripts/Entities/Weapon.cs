@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 public enum WeaponType {
     Common,
@@ -29,12 +28,7 @@ public class Weapon : MonoBehaviour {
             if (casing != null) {
                 casing.Emit(1);
             }
-        }
-
-        Vector3 rayDir = (targetPos - projectileNode.transform.position).normalized;
-        if (Physics.Raycast(projectileNode.transform.position, rayDir, out var hit, 1000f, tempLayer)) {
-            ImpactManager.instance.SpawnImpactEffect(hit.point, hit.normal, hit.collider.sharedMaterial);
-            DecalManager.instance.SpawnImpactDecal(hit.point - rayDir * 0.5f, rayDir, hit.collider.sharedMaterial, hit.collider.transform);
+            BulletManager.instance.SpawnBullet(projectileNode.transform.position, (targetPos - projectileNode.transform.position), 100f, true);
         }
     }
 }
