@@ -112,7 +112,7 @@ public class Character : MonoBehaviour
         }
 
         if (movement360) {
-            Vector3 prevAimPos = aimTarget.transform.position;
+            Vector3 prevAimPos = Vector3.zero;
             if (aimTarget != null) {
                 prevAimPos = aimTarget.transform.position;
             }
@@ -165,5 +165,6 @@ public class Character : MonoBehaviour
 
     public void EquipWeapon(Weapon wep) {
         _weapon = wep;
+        wep.owner = this;
     }
 }
