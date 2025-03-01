@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FootIKPlacement : MonoBehaviour {
-    [SerializeField] public float rayYOffset = 0;
-    [SerializeField] public float rayDistance = 0.15f;
-    [SerializeField] public float plantedYOffset = 0.1f;
+    public float rayYOffset = 0;
+    public float rayDistance = 0.15f;
+    public float plantedYOffset = 0.1f;
     [SerializeField] private LayerMask mask;
 
     private Animator _animator;
@@ -15,14 +15,14 @@ public class FootIKPlacement : MonoBehaviour {
     }
 
     private void SetFootIKTransform(AvatarIKGoal ikGoal) {
-        Vector3 footPos = _animator.GetIKPosition(ikGoal) + Vector3.down * rayYOffset;
-        Debug.DrawRay(footPos, Vector3.down * rayDistance, Color.red);
+        Vector3 footPos = _animator.GetIKPosition(ikGoal);
 
-        if (Physics.Raycast(footPos, Vector3.down, out var hit, rayDistance)) {
-            var posFoot = hit.point;
-            posFoot.y += plantedYOffset;
-            if (footPos.y < posFoot.y) {
-                _animator.SetIKPosition(ikGoal, posFoot);
+        if (Physics.Raycast(footPos + Vector3.down * rayYOffset, Vector3.down, out var hit, rayDistance, mask)) {
+            Debug.DrawRay(footPos + Vector3.down * rayYOffset, Vector3.down * rayDistance, Color.red);
+            var hitPos = hit.point;
+            hitPos.y += plantedYOffset;
+            if (footPos.y < hitPos.y) {
+                _animator.SetIKPosition(ikGoal, hitPos);
                 var tarRot = Quaternion.FromToRotation(Vector3.up, hit.normal);
                 var curRot = _animator.GetIKRotation(ikGoal);
                 _animator.SetIKRotation(ikGoal, Quaternion.RotateTowards(curRot, tarRot, 15f * Time.deltaTime));
