@@ -29,6 +29,13 @@ public class Character : MonoBehaviour
     [Header("Character")]
     public CharacterData data;
 
+    [HideInInspector]
+    public CapsuleCollider Bumper { 
+        get {
+            return _bumper;
+        }
+    }
+
     private float _currentMaxSpeed = 0f;
     private float _desiredSpeed = 0f;
     private Vector3 _desiredDir = Vector3.zero;
@@ -41,10 +48,39 @@ public class Character : MonoBehaviour
 
     Animator _animator;
     Weapon _weapon;
+    Rigidbody _rigidbody;
+    CapsuleCollider _collider;
+    CapsuleCollider _bumper;
 
     private void Awake() {
         _animator = GetComponent<Animator>();
         _currentMaxSpeed = maxSpeed;
+        _rigidbody = GetComponent<Rigidbody>();
+        _collider = GetComponent<CapsuleCollider>();
+        _bumper = GetComponents<CapsuleCollider>()[1];
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("Character") && !other.isTrigger) {
+            Physics.IgnoreCollision(_collider, other);
+        }
+    }
+
+    private void OnTriggerStay(Collider other) {
+        if (other.CompareTag("Character")) {
+            Character otherC = other.GetComponent<Character>();
+            Vector3 diff = (transform.position - other.transform.position);
+            Vector3 diffXZ = new Vector3(diff.x, 0, diff.z);
+            Vector3 velXZ = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
+            if (Vector3.Dot(diffXZ.normalized, velXZ.normalized) < 0) {
+                _rigidbody.MovePosition(transform.position - _rigidbody.velocity * Time.fixedDeltaTime);
+            }
+            diff = _rigidbody.position - other.transform.position;
+            diffXZ = new Vector3(diff.x, 0, diff.z);
+            if (diff.magnitude < _bumper.radius + otherC.Bumper.radius) {
+                _rigidbody.MovePosition(_rigidbody.position + diffXZ.normalized * 0.01f);
+            }
+        }
     }
 
     private void FixedUpdate() {
