@@ -7,8 +7,19 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
 
-public class Character : MonoBehaviour
-{
+public class Character : MonoBehaviour {
+    private class SimpleTransform {
+        public Vector3 Position { get; set; }
+        public Quaternion Rotation { get; set; }
+    }
+
+    enum CharacterState {
+        Idle,
+        Moving,
+        Ragdoll,
+        StandingUp,
+        Dead
+    }
 
     [Header("Movements")]
     public float acceleration = 20f;
@@ -40,9 +51,20 @@ public class Character : MonoBehaviour
 
     private bool _isReloading = false;
 
+    private float timeToReset = 1.5f;
+    private float elapsedRagdollReset = 0f;
+    private Rigidbody[] _ragdollRBodies;
+    private Collider[] _ragdollColliders;
+    private Transform[] _boneTransforms;
+    private SimpleTransform[] _ragdollTransforms;
+    private SimpleTransform[] _standupTransforms;
+
+    private CharacterState _currentState;
+
     Animator _animator;
     Weapon _weapon;
     Rigidbody _rigidbody;
+    Transform _hipsBone;
     CapsuleCollider _collider;
 
     private void Awake() {
@@ -53,10 +75,126 @@ public class Character : MonoBehaviour
         if (bumper != null) {
             Physics.IgnoreCollision(_collider, bumper.GetComponent<Collider>());
         }
+        _hipsBone = _animator.GetBoneTransform(HumanBodyBones.Hips);
+        _ragdollRBodies = _hipsBone.GetComponentsInChildren<Rigidbody>();
+        _ragdollColliders = _hipsBone.GetComponentsInChildren<Collider>();
+        _boneTransforms = _hipsBone.GetComponentsInChildren<Transform>();
+        _ragdollTransforms = new SimpleTransform[_boneTransforms.Length];
+        _standupTransforms = new SimpleTransform[_boneTransforms.Length];
+        for (int i = 0; i < _boneTransforms.Length; ++i) {
+            _ragdollTransforms[i] = new SimpleTransform();
+            _standupTransforms[i] = new SimpleTransform();
+        }
+        foreach (var col in _ragdollColliders) {
+            Physics.IgnoreCollision(GetComponent<CapsuleCollider>(), col);
+        }
+        DisableRagdoll();
+    }
+
+    private void StoreBoneTransforms(SimpleTransform[] transforms) {
+        for (int i = 0; i < _boneTransforms.Length; ++i) {
+            transforms[i].Position = _boneTransforms[i].localPosition;
+            transforms[i].Rotation = _boneTransforms[i].localRotation;
+        }
+    }
+
+    private void ApplyBoneTransforms(SimpleTransform[] transforms) {
+        for (int i = 0; i < _boneTransforms.Length; ++i) {
+            _boneTransforms[i].localPosition = transforms[i].Position;
+            _boneTransforms[i].localRotation = transforms[i].Rotation;
+        }
+    }
+
+    private void SampleClipTransforms(string clipName, SimpleTransform[] transforms) {
+        Vector3 prevPos = transform.position;
+        Quaternion prevRot = transform.rotation;
+
+        foreach (var clip in _animator.runtimeAnimatorController.animationClips) {
+            if (clip.name == clipName) {
+                clip.SampleAnimation(gameObject, 0);
+                StoreBoneTransforms(transforms);
+                break;
+            }
+        }
+
+        transform.position = prevPos;
+        transform.rotation = prevRot;
+    }
+
+    private void SelectStandupClip() {
+        float dot = Vector3.Dot(_hipsBone.forward, Vector3.down);
+        if (dot < 0) {
+            AlignGameObjectRotationToHips(true);
+            StoreBoneTransforms(_ragdollTransforms);
+            SampleClipTransforms(data.standUpClip, _standupTransforms);
+            ApplyBoneTransforms(_ragdollTransforms);
+            _animator.SetBool("FacingDown", false);
+        }
+        else {
+            AlignGameObjectRotationToHips(false);
+            StoreBoneTransforms(_ragdollTransforms);
+            SampleClipTransforms(data.standUpFaceDownClip, _standupTransforms);
+            ApplyBoneTransforms(_ragdollTransforms);
+            _animator.SetBool("FacingDown", true);
+        }
+    }
+
+    private void ResetFromRagdollToStandup() {
+        elapsedRagdollReset += Time.deltaTime;
+        float elapsed = elapsedRagdollReset / timeToReset;
+
+        for (int i = 0; i < _boneTransforms.Length; ++i) {
+            _boneTransforms[i].localPosition = Vector3.Lerp(_ragdollTransforms[i].Position, _standupTransforms[i].Position, elapsed);
+            _boneTransforms[i].localRotation = Quaternion.Lerp(_ragdollTransforms[i].Rotation, _standupTransforms[i].Rotation, elapsed);
+        }
+
+        if (elapsed >= 1f) {
+            ApplyBoneTransforms(_standupTransforms);
+            DisableRagdoll();
+        }
+    }
+
+    private void AlignGameObjectPositionToHips() {
+        Vector3 hipsPos = _hipsBone.position;
+
+        transform.position = hipsPos;
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit)) {
+            transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
+        }
+
+        _hipsBone.position = hipsPos;
+    }
+
+    private void AlignGameObjectRotationToHips(bool isHipReversed) {
+        Vector3 hipsPos = _hipsBone.position;
+        Quaternion hipsRot = _hipsBone.rotation;
+
+        Vector3 toDir = _hipsBone.up;
+        if (isHipReversed)
+            toDir *= -1f;
+        toDir.y = 0;
+        toDir.Normalize();
+        transform.rotation *= Quaternion.FromToRotation(transform.forward, toDir);
+
+        _hipsBone.position = hipsPos;
+        _hipsBone.rotation = hipsRot;
     }
 
     private void FixedUpdate() {
-        ProcessMove();
+        if (_currentState == CharacterState.Ragdoll) {
+            AlignGameObjectPositionToHips();
+        }
+        else if (_currentState == CharacterState.StandingUp) {
+            ResetFromRagdollToStandup();
+        }
+        else if (_currentState == CharacterState.Moving) {
+            ProcessMove();
+        }
+        else if (_currentState == CharacterState.Idle) {
+            if (_desiredDir.magnitude > 0f) {
+                _currentState = CharacterState.Moving;
+            }
+        }
     }
 
     private void ProcessMove() {
@@ -85,6 +223,7 @@ public class Character : MonoBehaviour
         else {
             if (_animator.GetInteger("State") == 1) {
                 _animator.SetInteger("State", 0);
+                _currentState = CharacterState.Idle;
             }
         }
         _animator.SetFloat("Speed", currentSpeed);
@@ -174,5 +313,32 @@ public class Character : MonoBehaviour
     public void EquipWeapon(Weapon wep) {
         _weapon = wep;
         wep.owner = this;
+    }
+
+    public void EnableRagdoll() {
+        _currentState = CharacterState.Ragdoll;
+        _animator.enabled = false;
+        _rigidbody.isKinematic = true;
+        _animator.Play("Ragdoll");
+        foreach (var rbody in _ragdollRBodies) {
+            rbody.isKinematic = false;
+        }
+        _collider.enabled = false;
+        elapsedRagdollReset = 0f;
+    }
+
+    public void StandUpFromRagdoll() {
+        SelectStandupClip();
+        _currentState = CharacterState.StandingUp;
+    }
+
+    public void DisableRagdoll() {
+        _currentState = CharacterState.Idle;
+        _animator.enabled = true;
+        _rigidbody.isKinematic = false;
+        foreach (var rbody in _ragdollRBodies) {
+            rbody.isKinematic = true;
+        }
+        _collider.enabled = true;
     }
 }
