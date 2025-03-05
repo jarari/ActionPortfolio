@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum CharacterType {
@@ -19,4 +17,6 @@ public struct CharacterStats {
 public class CharacterData : ScriptableObject {
     public CharacterStats stats;
     public CharacterType charType;
+    public string standUpClip;
+    public string standUpFaceDownClip;
 }
