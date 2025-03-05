@@ -2,17 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZombieBehavior : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+[RequireComponent(typeof(Character))]
+public class ZombieBehavior : MonoBehaviour {
+    enum ZombieState {
+        Idle,
+        Alerted,
+        Chase,
+        Ragdoll,
+        StandingUp,
+        Dead
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    Character _character;
+    Animator _animator;
+    Rigidbody _rigidbody;
+    ZombieState _currentState;
+    Transform _chasingTarget;
+
+    private void Awake() {
+        _character = GetComponent<Character>();
+        _animator = GetComponent<Animator>();
+        _currentState = ZombieState.Idle;
+    }
+
+    private void Start() {
+        _character.EnableRagdoll();
+        Invoke("StandUp", 5);
+    }
+
+    private void StandUp() {
+        _character.StandUpFromRagdoll();
+    }
+
+    private void IdleBehavior() {
+
+    }
+
+    void Update() {
+        switch (_currentState) {
+            case ZombieState.Idle:
+                IdleBehavior();
+                break;
+        }
     }
 }
