@@ -4181,7 +4181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Effectors: []
 --- !u!4 &2029477458
 Transform:
@@ -4275,7 +4275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df565ab0b8eb47a4897a22f20147e45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultCharacter: {fileID: 9068224027836854091}
+  defaultCharacter: {fileID: 6329867723466079701}
   characterCamera: {fileID: 1609103848}
 --- !u!1 &2147022285
 GameObject:
@@ -13396,8 +13396,8 @@ GameObject:
   - component: {fileID: 9068224027836854089}
   - component: {fileID: 9068224027836854088}
   - component: {fileID: 9068224027836854086}
-  - component: {fileID: 9068224027836854085}
   - component: {fileID: 9068224027836854091}
+  - component: {fileID: 9068224027836854092}
   - component: {fileID: 9068224027836854090}
   m_Layer: 3
   m_Name: Zombie
@@ -13406,31 +13406,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &9068224027836854085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9068224027836854084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a01f1b6918ef6b24da8667a49aa8a822, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  death: 0
-  idle: 0
-  fall: 0
-  punch: 0
-  hit: 0
-  stumble: 0
-  scream: 0
-  run: 0
-  ragdoll: 0
-  timeToReset: 0.5
-  standUpClip: Zombie Stand Up
-  standUpFaceDownClip: Zombie Facing Down Stand Up
-  cameraBoom: {fileID: 1609103846}
 --- !u!114 &9068224027836854086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13522,6 +13497,18 @@ MonoBehaviour:
   aimBase: {fileID: 5966521507256381113}
   data: {fileID: 11400000, guid: 9ba223977c3ca9443a82394dbf83a150, type: 2}
   bumper: {fileID: 1354513866}
+--- !u!114 &9068224027836854092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9068224027836854084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 324cf31b1a6a4c643aefc1e45b5af790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &9080540017626669303
 Transform:
   m_ObjectHideFlags: 0
