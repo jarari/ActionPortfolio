@@ -478,4 +478,17 @@ public class Character : MonoBehaviour {
         }
         return (GetBaseStat(type) + addModifier) * multModifier;
     }
+
+    public void Kill() {
+        _currentState = CharacterState.Dead;
+        _animator.SetTrigger("Death");
+        for (int i = 1; i < _animator.layerCount; ++i) {
+            _animator.SetLayerWeight(i, 0);
+        }
+        SetAimRigWeight(0f);
+    }
+
+    public bool IsDead() {
+        return _currentState == CharacterState.Dead;
+    }
 }
