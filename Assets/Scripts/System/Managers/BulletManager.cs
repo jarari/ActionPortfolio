@@ -42,10 +42,10 @@ public class BulletManager : MonoBehaviour {
         Destroy(bullet.gameObject);
     }
 
-    public void SpawnBullet(Vector3 position, Vector3 dir, float speed = 50f, bool gravity = false) {
+    public void SpawnBullet(Character attacker, Vector3 position, Vector3 dir, float speed = 50f, bool gravity = false) {
         Bullet b = Pool.Get();
         b.transform.position = position;
         b.transform.forward = dir;
-        b.Initialize(speed, gravity);
+        b.Initialize(attacker, speed, gravity);
     }
 }

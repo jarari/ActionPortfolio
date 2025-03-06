@@ -30,7 +30,7 @@ public class Weapon : MonoBehaviour {
                 Vector3 velocity = (casingNode.transform.forward + casingNode.transform.InverseTransformVector(spread)).normalized * Random.Range(2.5f, 4f) + owner.GetComponent<Rigidbody>().velocity;
                 DebrisManager.instance.SpawnTempDebris(casingNode.transform.position, casingNode.transform.rotation, velocity, 5f);
             }
-            BulletManager.instance.SpawnBullet(projectileNode.transform.position, (targetPos - projectileNode.transform.position), 100f, true);
+            BulletManager.instance.SpawnBullet(owner, projectileNode.transform.position, (targetPos - projectileNode.transform.position), 100f, true);
         }
     }
 }
