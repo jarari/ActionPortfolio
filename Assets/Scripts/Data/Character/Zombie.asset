@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: Zombie
   m_EditorClassIdentifier: 
   stats:
-    CurrentHP: 2000
-    MaxHP: 2000
-    Attack: 400
-    Defense: 100
+    <CurrentHP>k__BackingField: 1000
+    <MaxHP>k__BackingField: 1000
+    <Attack>k__BackingField: 100
+    <Defense>k__BackingField: 25
+    <CritChance>k__BackingField: 0
+    <CritMult>k__BackingField: 150
+    <DefFlatPenetration>k__BackingField: 0
+    <DefPercentagePenetration>k__BackingField: 0
   charType: 0
   standUpClip: Zombie Stand Up
   standUpFaceDownClip: Zombie Facing Down Stand Up

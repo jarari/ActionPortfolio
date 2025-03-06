@@ -13,8 +13,14 @@ MonoBehaviour:
   m_Name: SWAT
   m_EditorClassIdentifier: 
   stats:
-    CurrentHP: 1000
-    MaxHP: 1000
-    Attack: 100
-    Defense: 100
+    <CurrentHP>k__BackingField: 2000
+    <MaxHP>k__BackingField: 2000
+    <Attack>k__BackingField: 80
+    <Defense>k__BackingField: 35
+    <CritChance>k__BackingField: 10
+    <CritMult>k__BackingField: 150
+    <DefFlatPenetration>k__BackingField: 0
+    <DefPercentagePenetration>k__BackingField: 0
   charType: 1
+  standUpClip: 
+  standUpFaceDownClip: 
