@@ -18,13 +18,21 @@ public enum StatType {
 
 [System.Serializable]
 public struct CharacterStats {
+    [field: SerializeField]
     public float CurrentHP { get; set; }
+    [field: SerializeField]
     public float MaxHP { get; set; }
+    [field: SerializeField]
     public float Attack { get; set; }
+    [field: SerializeField]
     public float Defense { get; set; }
+    [field: SerializeField]
     public float CritChance { get; set; }
+    [field: SerializeField]
     public float CritMult { get; set; }
+    [field: SerializeField]
     public float DefFlatPenetration { get; set; }
+    [field: SerializeField]
     public float DefPercentagePenetration { get; set; }
 }
 
