@@ -96,6 +96,7 @@ public class Character : MonoBehaviour {
         foreach (var col in _ragdollColliders) {
             Physics.IgnoreCollision(GetComponent<CapsuleCollider>(), col);
         }
+        _statModifiers = new Dictionary<int, StatModifier>();
         DisableRagdoll();
     }
 
