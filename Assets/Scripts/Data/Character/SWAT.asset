@@ -17,8 +17,8 @@ MonoBehaviour:
     <MaxHP>k__BackingField: 2000
     <Attack>k__BackingField: 80
     <Defense>k__BackingField: 35
-    <CritChance>k__BackingField: 10
-    <CritMult>k__BackingField: 150
+    <CritChance>k__BackingField: 0.1
+    <CritMult>k__BackingField: 1.5
     <DefFlatPenetration>k__BackingField: 0
     <DefPercentagePenetration>k__BackingField: 0
   charType: 1

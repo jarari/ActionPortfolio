@@ -18,7 +18,7 @@ MonoBehaviour:
     <Attack>k__BackingField: 100
     <Defense>k__BackingField: 25
     <CritChance>k__BackingField: 0
-    <CritMult>k__BackingField: 150
+    <CritMult>k__BackingField: 1.5
     <DefFlatPenetration>k__BackingField: 0
     <DefPercentagePenetration>k__BackingField: 0
   charType: 0
