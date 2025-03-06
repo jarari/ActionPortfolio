@@ -486,6 +486,8 @@ public class Character : MonoBehaviour {
     }
 
     public void Kill() {
+        if (_currentState == CharacterState.Dead)
+            return;
         _currentState = CharacterState.Dead;
         _animator.SetTrigger("Death");
         for (int i = 1; i < _animator.layerCount; ++i) {
