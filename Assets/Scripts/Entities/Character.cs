@@ -368,6 +368,9 @@ public class Character : MonoBehaviour {
             rbody.isKinematic = false;
         }
         _collider.enabled = false;
+        if (bumper != null) {
+            bumper.SetActive(false);
+        }
         _elapsedRagdollReset = 0f;
         SetAimRigWeight(0f);
     }
@@ -384,6 +387,9 @@ public class Character : MonoBehaviour {
             rbody.isKinematic = true;
         }
         _collider.enabled = true;
+        if (bumper != null) {
+            bumper.SetActive(true);
+        }
         if (_currentState == CharacterState.Resetting) {
             _currentState = CharacterState.WaitingStandUp;
             _animator.Play(_currentStandUpClip);
