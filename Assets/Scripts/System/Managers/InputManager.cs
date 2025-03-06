@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour {
         if (characterInControl != null) {
             characterInControl.SetSprint(playerActions.Battle.Sprint.IsPressed());
 
-            if (characterInControl.data.charType == CharacterType.Shooter) {
+            if (characterInControl.Data.charType == CharacterType.Shooter) {
                 if (playerActions.Battle.Aim.IsPressed() || playerActions.Battle.Fire.IsPressed()) {
                     characterInControl.movement360 = true;
                 }

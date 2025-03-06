@@ -40,9 +40,11 @@ public class Character : MonoBehaviour {
     public GameObject aimBase;
 
     [Header("Character")]
-    public CharacterData data;
+    public CharacterData baseData;
     public GameObject bumper;
     public Rig aimRig;
+
+    public CharacterData Data { get; private set; }
 
     private float _currentMaxSpeed = 0f;
     private float _desiredSpeed = 0f;
@@ -98,6 +100,7 @@ public class Character : MonoBehaviour {
         }
         _statModifiers = new Dictionary<int, StatModifier>();
         DisableRagdoll();
+        Data = Instantiate(baseData);
     }
 
     private void StoreBoneTransforms(SimpleTransform[] transforms) {
@@ -134,12 +137,12 @@ public class Character : MonoBehaviour {
         float dot = Vector3.Dot(_hipsBone.forward, Vector3.down);
         if (dot < 0) {
             AlignGameObjectRotationToHips(true);
-            _currentStandUpClip = data.standUpClip;
+            _currentStandUpClip = Data.standUpClip;
             _animator.SetBool("FacingDown", false);
         }
         else {
             AlignGameObjectRotationToHips(false);
-            _currentStandUpClip = data.standUpFaceDownClip;
+            _currentStandUpClip = Data.standUpFaceDownClip;
             _animator.SetBool("FacingDown", true);
         }
         StoreBoneTransforms(_ragdollTransforms);
@@ -435,21 +438,21 @@ public class Character : MonoBehaviour {
     public float GetBaseStat(StatType type) {
         switch (type) {
             case StatType.CurrentHP:
-                return data.stats.CurrentHP;
+                return Data.stats.CurrentHP;
             case StatType.MaxHP:
-                return data.stats.MaxHP;
+                return Data.stats.MaxHP;
             case StatType.Attack:
-                return data.stats.Attack;
+                return Data.stats.Attack;
             case StatType.Defense:
-                return data.stats.Defense;
+                return Data.stats.Defense;
             case StatType.CritChance:
-                return data.stats.CritChance;
+                return Data.stats.CritChance;
             case StatType.CritMult:
-                return data.stats.CritMult;
+                return Data.stats.CritMult;
             case StatType.DefFlatPenetration:
-                return data.stats.DefFlatPenetration;
+                return Data.stats.DefFlatPenetration;
             case StatType.DefPercentagePenetration:
-                return data.stats.DefPercentagePenetration;
+                return Data.stats.DefPercentagePenetration;
         }
         throw (new NotImplementedException());
     }

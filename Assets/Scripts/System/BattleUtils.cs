@@ -14,8 +14,8 @@ public static class BattleUtils {
     }
 
     public static void DoDamage(Character victim, float damage) {
-        victim.data.stats.CurrentHP -= damage;
-        if (victim.data.stats.CurrentHP <= 0) {
+        victim.Data.stats.CurrentHP -= damage;
+        if (victim.Data.stats.CurrentHP <= 0) {
             victim.Kill();
         }
     }
