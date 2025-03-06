@@ -35,6 +35,7 @@ public class Character : MonoBehaviour {
     public float trackYawMin = -20f;
     public float trackYawMax = 50f;
     public float trackTime = 0.1f;
+    public float aimRotationSpeed = 36f;
     public GameObject aimTarget;
     public GameObject aimBase;
 
@@ -306,7 +307,7 @@ public class Character : MonoBehaviour {
             if (aimTarget != null) {
                 prevAimPos = aimTarget.transform.position;
             }
-            Vector3 characterForward = Vector3.RotateTowards(transform.forward, Vector3.ProjectOnPlane(worldPosition - transform.position, Vector3.up), rotationSpeed * Time.deltaTime, 0f);
+            Vector3 characterForward = Vector3.RotateTowards(transform.forward, Vector3.ProjectOnPlane(worldPosition - transform.position, Vector3.up), aimRotationSpeed * Time.deltaTime, 0f);
             transform.forward = characterForward;
             if (aimTarget != null) {
                 aimTarget.transform.position = prevAimPos;
