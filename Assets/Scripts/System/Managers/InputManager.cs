@@ -60,7 +60,7 @@ public class InputManager : MonoBehaviour {
             camController.RotateCamera(lookInput.y, lookInput.x);
 
             Vector3 aimPos = camController.RaycastForward();
-            characterInControl.SetAimTo(aimPos);
+            characterInControl.SetDesiredAimTo(aimPos);
         }
     }
 

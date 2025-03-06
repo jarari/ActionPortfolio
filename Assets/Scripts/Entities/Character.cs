@@ -50,7 +50,7 @@ public class Character : MonoBehaviour {
     private Vector3 _moveDir = Vector3.zero;
 
     private Vector3 _previousAimDir = Vector3.forward;
-    private Vector3 _actualAimPos = Vector3.zero;
+    private Vector3 _desiredAimPos = Vector3.zero;
     private float aimRigWeightTarget = 1f;
     private float aimRigWeightChangeTime = 0.5f;
 
@@ -220,6 +220,9 @@ public class Character : MonoBehaviour {
                 SetAimRigWeightTarget(1f);
             }
         }
+        else if (_currentState != CharacterState.Dead) {
+            ProcessAim();
+        }
         if (aimRig.weight != aimRigWeightTarget) {
             float step = Mathf.Sign(aimRigWeightTarget - aimRig.weight) * Time.deltaTime / aimRigWeightChangeTime;
             if (step > 0) {
@@ -285,14 +288,8 @@ public class Character : MonoBehaviour {
         }
     }
 
-    public void SetDesiredDirection(float worldDirX, float worldDirZ) {
-        _desiredDir.x = worldDirX;
-        _desiredDir.z = worldDirZ;
-        _desiredDir = _desiredDir.normalized;
-    }
-
-    public void SetAimTo(Vector3 worldPosition) {
-        Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
+    private void ProcessAim() {
+        Vector3 localPosition = transform.InverseTransformPoint(_desiredAimPos);
         Vector3 projXZ = Vector3.ProjectOnPlane(localPosition.normalized, Vector3.up);
         float targetYaw = Mathf.Clamp(Vector3.Angle(projXZ, Vector3.forward) * Mathf.Sign(projXZ.x), trackYawMin, trackYawMax);
         float targetPitch = Vector3.Angle(localPosition.normalized, projXZ) * Mathf.Sign(localPosition.y);
@@ -308,13 +305,22 @@ public class Character : MonoBehaviour {
             if (aimTarget != null) {
                 prevAimPos = aimTarget.transform.position;
             }
-            Vector3 characterForward = Vector3.RotateTowards(transform.forward, Vector3.ProjectOnPlane(worldPosition - transform.position, Vector3.up), aimRotationSpeed * Time.deltaTime, 0f);
+            Vector3 characterForward = Vector3.RotateTowards(transform.forward, Vector3.ProjectOnPlane(_desiredAimPos - transform.position, Vector3.up), aimRotationSpeed * Time.deltaTime, 0f);
             transform.forward = characterForward;
             if (aimTarget != null) {
                 aimTarget.transform.position = prevAimPos;
             }
         }
-        _actualAimPos = worldPosition;
+    }
+
+    public void SetDesiredDirection(float worldDirX, float worldDirZ) {
+        _desiredDir.x = worldDirX;
+        _desiredDir.z = worldDirZ;
+        _desiredDir = _desiredDir.normalized;
+    }
+
+    public void SetDesiredAimTo(Vector3 worldPosition) {
+        _desiredAimPos = worldPosition;
     }
 
 
@@ -350,7 +356,7 @@ public class Character : MonoBehaviour {
         }
         else if (args[0] == "WeaponFire") {
             if (_weapon != null) {
-                _weapon.FireProjectile(_actualAimPos);
+                _weapon.FireProjectile(_desiredAimPos);
             }
         }
     }
