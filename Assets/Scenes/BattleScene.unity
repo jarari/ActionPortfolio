@@ -10706,6 +10706,7 @@ MonoBehaviour:
   aimBase: {fileID: 2530180491874757983}
   data: {fileID: 11400000, guid: e8e714fd81aac4249b6c2e5a5767e7f8, type: 2}
   bumper: {fileID: 1003412129}
+  aimRig: {fileID: 364135459}
 --- !u!4 &6341119541919156700
 Transform:
   m_ObjectHideFlags: 0
@@ -13497,6 +13498,7 @@ MonoBehaviour:
   aimBase: {fileID: 5966521507256381113}
   data: {fileID: 11400000, guid: 9ba223977c3ca9443a82394dbf83a150, type: 2}
   bumper: {fileID: 1354513866}
+  aimRig: {fileID: 2029477457}
 --- !u!114 &9068224027836854092
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,8 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
+using UnityEngine.Animations.Rigging;
 
 
 public class Character : MonoBehaviour {
@@ -17,6 +16,8 @@ public class Character : MonoBehaviour {
         Idle,
         Moving,
         Ragdoll,
+        Resetting,
+        WaitingStandUp,
         StandingUp,
         Dead
     }
@@ -40,6 +41,7 @@ public class Character : MonoBehaviour {
     [Header("Character")]
     public CharacterData data;
     public GameObject bumper;
+    public Rig aimRig;
 
     private float _currentMaxSpeed = 0f;
     private float _desiredSpeed = 0f;
@@ -48,11 +50,14 @@ public class Character : MonoBehaviour {
 
     private Vector3 _previousAimDir = Vector3.forward;
     private Vector3 _actualAimPos = Vector3.zero;
+    private float aimRigWeightTarget = 1f;
+    private float aimRigWeightChangeTime = 0.5f;
 
     private bool _isReloading = false;
 
-    private float timeToReset = 1.5f;
-    private float elapsedRagdollReset = 0f;
+    private float _timeToReset = 0.5f;
+    private float _elapsedRagdollReset = 0f;
+    private string _currentStandUpClip = "";
     private Rigidbody[] _ragdollRBodies;
     private Collider[] _ragdollColliders;
     private Transform[] _boneTransforms;
@@ -125,23 +130,22 @@ public class Character : MonoBehaviour {
         float dot = Vector3.Dot(_hipsBone.forward, Vector3.down);
         if (dot < 0) {
             AlignGameObjectRotationToHips(true);
-            StoreBoneTransforms(_ragdollTransforms);
-            SampleClipTransforms(data.standUpClip, _standupTransforms);
-            ApplyBoneTransforms(_ragdollTransforms);
+            _currentStandUpClip = data.standUpClip;
             _animator.SetBool("FacingDown", false);
         }
         else {
             AlignGameObjectRotationToHips(false);
-            StoreBoneTransforms(_ragdollTransforms);
-            SampleClipTransforms(data.standUpFaceDownClip, _standupTransforms);
-            ApplyBoneTransforms(_ragdollTransforms);
+            _currentStandUpClip = data.standUpFaceDownClip;
             _animator.SetBool("FacingDown", true);
         }
+        StoreBoneTransforms(_ragdollTransforms);
+        SampleClipTransforms(_currentStandUpClip, _standupTransforms);
+        ApplyBoneTransforms(_ragdollTransforms);
     }
 
     private void ResetFromRagdollToStandup() {
-        elapsedRagdollReset += Time.deltaTime;
-        float elapsed = elapsedRagdollReset / timeToReset;
+        _elapsedRagdollReset += Time.deltaTime;
+        float elapsed = _elapsedRagdollReset / _timeToReset;
 
         for (int i = 0; i < _boneTransforms.Length; ++i) {
             _boneTransforms[i].localPosition = Vector3.Lerp(_ragdollTransforms[i].Position, _standupTransforms[i].Position, elapsed);
@@ -180,14 +184,35 @@ public class Character : MonoBehaviour {
         _hipsBone.rotation = hipsRot;
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         if (_currentState == CharacterState.Ragdoll) {
             AlignGameObjectPositionToHips();
         }
-        else if (_currentState == CharacterState.StandingUp) {
+        else if (_currentState == CharacterState.Resetting) {
             ResetFromRagdollToStandup();
         }
-        else if (_currentState == CharacterState.Moving) {
+        else if (_currentState == CharacterState.WaitingStandUp && _animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == _currentStandUpClip) {
+            _currentState = CharacterState.StandingUp;
+        }
+        else if (_currentState == CharacterState.StandingUp) {
+            if (!_animator.IsInTransition(0) && _animator.GetCurrentAnimatorClipInfo(0)[0].clip.name != _currentStandUpClip) {
+                _currentState = CharacterState.Idle;
+                SetAimRigWeightTarget(1f);
+            }
+        }
+        if (aimRig.weight != aimRigWeightTarget) {
+            float step = Mathf.Sign(aimRigWeightTarget - aimRig.weight) * Time.deltaTime / aimRigWeightChangeTime;
+            if (step > 0) {
+                aimRig.weight = Mathf.Min(aimRig.weight + step, aimRigWeightTarget);
+            }
+            else {
+                aimRig.weight = Mathf.Max(aimRig.weight + step, aimRigWeightTarget);
+            }
+        }
+    }
+
+    private void FixedUpdate() {
+        if (_currentState == CharacterState.Moving) {
             ProcessMove();
         }
         else if (_currentState == CharacterState.Idle) {
@@ -324,21 +349,41 @@ public class Character : MonoBehaviour {
             rbody.isKinematic = false;
         }
         _collider.enabled = false;
-        elapsedRagdollReset = 0f;
+        _elapsedRagdollReset = 0f;
+        SetAimRigWeight(0f);
     }
 
     public void StandUpFromRagdoll() {
         SelectStandupClip();
-        _currentState = CharacterState.StandingUp;
+        _currentState = CharacterState.Resetting;
     }
 
     public void DisableRagdoll() {
-        _currentState = CharacterState.Idle;
         _animator.enabled = true;
         _rigidbody.isKinematic = false;
         foreach (var rbody in _ragdollRBodies) {
             rbody.isKinematic = true;
         }
         _collider.enabled = true;
+        if (_currentState == CharacterState.Resetting) {
+            _currentState = CharacterState.WaitingStandUp;
+            _animator.Play(_currentStandUpClip);
+        }
+        else {
+            _currentState = CharacterState.Idle;
+        }
+    }
+
+    public void SetAimRigWeight(float weight) {
+        if (aimRig != null) {
+            aimRig.weight = weight;
+            aimRigWeightTarget = weight;
+        }
+    }
+
+    public void SetAimRigWeightTarget(float weight) {
+        if (aimRig != null) {
+            aimRigWeightTarget = weight;
+        }
     }
 }
