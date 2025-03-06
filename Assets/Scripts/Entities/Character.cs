@@ -492,7 +492,12 @@ public class Character : MonoBehaviour {
         if (_currentState == CharacterState.Dead)
             return;
         _currentState = CharacterState.Dead;
-        _animator.SetTrigger("Death");
+        if (UnityEngine.Random.Range(float.Epsilon, 1f) < 0.5f) {
+            _animator.SetTrigger("Death");
+        }
+        else {
+            EnableRagdoll();
+        }
         for (int i = 1; i < _animator.layerCount; ++i) {
             _animator.SetLayerWeight(i, 0);
         }
