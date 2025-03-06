@@ -66,6 +66,8 @@ public class Character : MonoBehaviour {
 
     private CharacterState _currentState;
 
+    private Dictionary<int, StatModifier> _statModifiers;
+
     Animator _animator;
     Weapon _weapon;
     Rigidbody _rigidbody;
@@ -184,7 +186,23 @@ public class Character : MonoBehaviour {
         _hipsBone.rotation = hipsRot;
     }
 
+    private void UpdateStatModifiers() {
+        List<int> markedForRemoval = new List<int>();
+        foreach (var kvp in _statModifiers) {
+            if (kvp.Value.Lifetime != -1) {
+                kvp.Value.Elapsed += Time.deltaTime;
+                if (kvp.Value.Elapsed >= kvp.Value.Lifetime) {
+                    markedForRemoval.Add(kvp.Key);
+                }
+            }
+        }
+        foreach(int key in markedForRemoval) {
+            _statModifiers.Remove(key);
+        }
+    }
+
     private void Update() {
+        UpdateStatModifiers();
         if (_currentState == CharacterState.Ragdoll) {
             AlignGameObjectPositionToHips();
         }
@@ -385,5 +403,71 @@ public class Character : MonoBehaviour {
         if (aimRig != null) {
             aimRigWeightTarget = weight;
         }
+    }
+
+    public void AddStatModifier(string id, StatType target, float value, StatModType type, int priority = 50, float lifetime = -1) {
+        int _id = id.GetHashCode();
+        if (!_statModifiers.ContainsKey(_id)) {
+            StatModifier statMod = new StatModifier(_id, target, value, type, priority, lifetime);
+            _statModifiers.Add(_id, statMod);
+        }
+    }
+
+    public void RemoveStatModifier(string id) {
+        int key = id.GetHashCode();
+        _statModifiers.Remove(key);
+    }
+
+    public float GetBaseStat(StatType type) {
+        switch (type) {
+            case StatType.CurrentHP:
+                return data.stats.CurrentHP;
+            case StatType.MaxHP:
+                return data.stats.MaxHP;
+            case StatType.Attack:
+                return data.stats.Attack;
+            case StatType.Defense:
+                return data.stats.Defense;
+            case StatType.CritChance:
+                return data.stats.CritChance;
+            case StatType.CritMult:
+                return data.stats.CritMult;
+            case StatType.DefFlatPenetration:
+                return data.stats.DefFlatPenetration;
+            case StatType.DefPercentagePenetration:
+                return data.stats.DefPercentagePenetration;
+        }
+        throw (new NotImplementedException());
+    }
+
+    public float GetFinalStat(StatType type) {
+        float addModifier = 0f;
+        float multModifier = 1f;
+        float setModifier = 0f;
+        bool hasSet = false;
+        int maxPriority = int.MinValue;
+        foreach (var kvp in _statModifiers) {
+            if (kvp.Value.Target == type) {
+                switch (kvp.Value.Type) {
+                    case StatModType.Add:
+                        addModifier += kvp.Value.Value;
+                        break;
+                    case StatModType.Multiply:
+                        multModifier += kvp.Value.Value;
+                        break;
+                    case StatModType.Set:
+                        if (kvp.Value.Priority >= maxPriority) {
+                            hasSet = true;
+                            maxPriority = kvp.Value.Priority;
+                            setModifier = kvp.Value.Value;
+                        }
+                        break;
+                }
+            }
+        }
+        if (hasSet) {
+            return setModifier;
+        }
+        return (GetBaseStat(type) + addModifier) * multModifier;
     }
 }
