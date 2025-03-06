@@ -26,8 +26,6 @@ public class ZombieBehavior : MonoBehaviour {
     }
 
     private void Start() {
-        _character.EnableRagdoll();
-        Invoke("StandUp", 5);
     }
 
     private void StandUp() {
