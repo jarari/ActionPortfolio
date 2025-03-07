@@ -112,6 +112,9 @@ public class Character : MonoBehaviour {
             Physics.IgnoreCollision(GetComponent<CapsuleCollider>(), col);
         }
         _statModifiers = new Dictionary<int, StatModifier>();
+        if (aimTarget != null) {
+            _desiredAimPos = aimTarget.transform.position;
+        }
         DisableRagdoll();
         Data = Instantiate(baseData);
     }
