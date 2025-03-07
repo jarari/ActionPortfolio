@@ -35,7 +35,6 @@ public class Bullet : MonoBehaviour {
             Character victim = collision.gameObject.GetComponentInParent<Character>();
             float damage = BattleUtils.CalculateDamage(_attacker, victim, 1.0f, true);
             BattleUtils.DoDamage(victim, damage);
-            Debug.LogFormat("Inflicted {0} damage to {1}", damage, victim.name);
         }
 
         ReturnToPool();
