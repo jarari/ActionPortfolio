@@ -18,8 +18,7 @@ public class Character : MonoBehaviour {
         Ragdoll,
         Resetting,
         WaitingStandUp,
-        StandingUp,
-        Dead
+        StandingUp
     }
 
     public enum CharacterTeam {
@@ -52,6 +51,7 @@ public class Character : MonoBehaviour {
     public Rig aimRig;
 
     public CharacterData Data { get; private set; }
+    public bool IsDead { get; private set; }
 
     public Action OnRagdoll;
     public Action OnStandUp;
@@ -240,7 +240,7 @@ public class Character : MonoBehaviour {
                 OnStandUp.Invoke();
             }
         }
-        else if (_currentState != CharacterState.Dead) {
+        else if (!IsDead) {
             ProcessAim();
         }
         if (aimRig.weight != aimRigWeightTarget) {
@@ -531,9 +531,9 @@ public class Character : MonoBehaviour {
     }
 
     public void Kill() {
-        if (_currentState == CharacterState.Dead)
+        if (IsDead)
             return;
-        _currentState = CharacterState.Dead;
+        IsDead = true;
         if (UnityEngine.Random.Range(float.Epsilon, 1f) < 0.5f) {
             _animator.SetTrigger("Death");
         }
@@ -545,9 +545,5 @@ public class Character : MonoBehaviour {
         }
         SetAimRigWeight(0f);
         OnDeath?.Invoke();
-    }
-
-    public bool IsDead() {
-        return _currentState == CharacterState.Dead;
     }
 }
