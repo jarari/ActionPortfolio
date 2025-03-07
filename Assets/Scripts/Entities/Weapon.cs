@@ -13,7 +13,8 @@ public class Weapon : MonoBehaviour {
     public MuzzleFlash muzzleflash;
     public GameObject casingNode;
     public WeaponType wepType;
-    public LayerMask tempLayer;
+    public float spread = 4f;
+    public float aimSpread = 2f;
 
     private void Awake() {
         if (owner != null)
@@ -30,7 +31,13 @@ public class Weapon : MonoBehaviour {
                 Vector3 velocity = (casingNode.transform.forward + casingNode.transform.InverseTransformVector(spread)).normalized * Random.Range(2.5f, 4f) + owner.GetComponent<Rigidbody>().velocity;
                 DebrisManager.instance.SpawnTempDebris(casingNode.transform.position, casingNode.transform.rotation, velocity, 5f);
             }
-            BulletManager.instance.SpawnBullet(owner, projectileNode.transform.position, (targetPos - projectileNode.transform.position), 100f, true);
+            float _currentSpread = spread / 2f;
+            if (owner != null && owner.IsAiming()) {
+                _currentSpread = aimSpread / 2f;
+            }
+            Vector3 bulletDir = Quaternion.Euler(Random.Range(-_currentSpread, _currentSpread), Random.Range(-_currentSpread, _currentSpread), 0) 
+                * (targetPos - projectileNode.transform.position);
+            BulletManager.instance.SpawnBullet(owner, projectileNode.transform.position, bulletDir, 100f, true);
         }
     }
 }
