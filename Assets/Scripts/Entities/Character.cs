@@ -440,7 +440,7 @@ public class Character : MonoBehaviour {
         }
         else {
             _currentState = CharacterState.Idle;
-            OnStandUp.Invoke();
+            OnStandUp?.Invoke();
         }
     }
 
