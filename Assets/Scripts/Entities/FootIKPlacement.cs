@@ -6,7 +6,6 @@ public class FootIKPlacement : MonoBehaviour {
     public float rayYOffset = 0;
     public float rayDistance = 0.15f;
     public float plantedYOffset = 0.1f;
-    [SerializeField] private LayerMask mask;
 
     private Animator _animator;
     public bool ikEnabled = true;
@@ -17,7 +16,7 @@ public class FootIKPlacement : MonoBehaviour {
     private void SetFootIKTransform(AvatarIKGoal ikGoal) {
         Vector3 footPos = _animator.GetIKPosition(ikGoal);
 
-        if (Physics.Raycast(footPos + Vector3.down * rayYOffset, Vector3.down, out var hit, rayDistance, mask)) {
+        if (Physics.Raycast(footPos + Vector3.down * rayYOffset, Vector3.down, out var hit, rayDistance, GameSettings.worldMask)) {
             Debug.DrawRay(footPos + Vector3.down * rayYOffset, Vector3.down * rayDistance, Color.red);
             var hitPos = hit.point;
             hitPos.y += plantedYOffset;

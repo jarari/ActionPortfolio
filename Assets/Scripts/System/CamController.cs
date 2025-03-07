@@ -16,11 +16,9 @@ public class CamController : MonoBehaviour {
 
     [Header("Camera Raycast")]
     public float marginOnHit = 0.05f;
-    public LayerMask collisionLayer;
 
     [Header("Camera Aim")]
     public float aimDistance = 1000f;
-    public LayerMask aimLayer;
 
     private Camera _camera;
     private GameObject camTarget;
@@ -45,11 +43,11 @@ public class CamController : MonoBehaviour {
         Vector3 camTargetPos = new Vector3(armOffsetXY.x, armOffsetXY.y, -armLength);
         Vector3 camFrom = transform.TransformPoint(armOffsetXY);
         RaycastHit hitInfo;
-        if (Physics.Raycast(transform.position, (camFrom - transform.position).normalized, out hitInfo, armOffsetXY.magnitude, collisionLayer)) {
+        if (Physics.Raycast(transform.position, (camFrom - transform.position).normalized, out hitInfo, armOffsetXY.magnitude, GameSettings.collisionMask)) {
             Vector3 diff = hitInfo.point - transform.position;
             camTargetPos = transform.InverseTransformDirection(diff.normalized) * (hitInfo.distance - marginOnHit);
         }
-        else if (Physics.Raycast(camFrom, -transform.forward, out hitInfo, armLength, collisionLayer)) {
+        else if (Physics.Raycast(camFrom, -transform.forward, out hitInfo, armLength, GameSettings.collisionMask)) {
             Vector3 diff = hitInfo.point - transform.position;
             camTargetPos = transform.InverseTransformDirection(diff.normalized) * (hitInfo.distance - marginOnHit);
         }
@@ -65,7 +63,7 @@ public class CamController : MonoBehaviour {
 
     public Vector3 RaycastForward() {
         Vector3 targetPos = _camera.transform.position + _camera.transform.forward * aimDistance;
-        if (Physics.Raycast(_camera.transform.position + _camera.transform.forward * 1f, _camera.transform.forward, out var hit, aimDistance, aimLayer))
+        if (Physics.Raycast(_camera.transform.position + _camera.transform.forward * 1f, _camera.transform.forward, out var hit, aimDistance, GameSettings.aimMask))
             targetPos = hit.point;
         return targetPos;
     }
