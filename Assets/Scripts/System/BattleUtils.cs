@@ -20,6 +20,8 @@ public static class BattleUtils {
     }
 
     public static void DoDamage(Character attacker, Character victim, DamageType type, float damage) {
+        if (damage == 0 || attacker.team == victim.team)
+            return;
         victim.NotifyOnHit(attacker, type, damage);
         victim.Data.stats.CurrentHP -= damage;
         if (victim.Data.stats.CurrentHP <= 0) {

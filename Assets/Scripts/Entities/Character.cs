@@ -22,6 +22,12 @@ public class Character : MonoBehaviour {
         Dead
     }
 
+    public enum CharacterTeam {
+        Player,
+        Enemy,
+        Neutral
+    }
+
     [Header("Movements")]
     public float acceleration = 20f;
     public float deceleration = 25f;
@@ -41,6 +47,7 @@ public class Character : MonoBehaviour {
 
     [Header("Character")]
     public CharacterData baseData;
+    public CharacterTeam team;
     public GameObject bumper;
     public Rig aimRig;
 
