@@ -49,6 +49,7 @@ public class Character : MonoBehaviour {
     public Action OnRagdoll;
     public Action OnStandUp;
     public Action OnDeath;
+    public Action<Character, DamageType, float> OnHit;
 
     private float _currentMaxSpeed = 0f;
     private float _desiredSpeed = 0f;
@@ -513,6 +514,10 @@ public class Character : MonoBehaviour {
             return setModifier;
         }
         return (GetBaseStat(type) + addModifier) * multModifier;
+    }
+
+    public void NotifyOnHit(Character attacker, DamageType type, float damage) {
+        OnHit?.Invoke(attacker, type, damage);
     }
 
     public void Kill() {

@@ -34,7 +34,7 @@ public class Bullet : MonoBehaviour {
         if (collision.collider.CompareTag("Character")) {
             Character victim = collision.gameObject.GetComponentInParent<Character>();
             float damage = BattleUtils.CalculateDamage(_attacker, victim, 1.0f, true);
-            BattleUtils.DoDamage(victim, damage);
+            BattleUtils.DoDamage(_attacker, victim, DamageType.Bullet, damage);
         }
 
         ReturnToPool();
