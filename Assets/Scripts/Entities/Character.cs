@@ -57,6 +57,7 @@ public class Character : MonoBehaviour {
     private float aimRigWeightChangeTime = 0.5f;
 
     private bool _isReloading = false;
+    private bool _isSprinting = false;
 
     private float _timeToReset = 0.5f;
     private float _elapsedRagdollReset = 0f;
@@ -249,6 +250,16 @@ public class Character : MonoBehaviour {
     }
 
     private void ProcessMove() {
+        if (!IsAiming()) {
+            if (_isSprinting)
+                _currentMaxSpeed = maxSprintSpeed;
+            else
+                _currentMaxSpeed = maxSpeed;
+        }
+        else {
+            _currentMaxSpeed = maxSpeed * 0.8f;
+        }
+
         if (_desiredDir.magnitude > 0f) {
             if (_desiredSpeed < _currentMaxSpeed) {
                 _desiredSpeed = Mathf.Min(_desiredSpeed + acceleration * Time.deltaTime, _currentMaxSpeed);
@@ -328,10 +339,7 @@ public class Character : MonoBehaviour {
 
 
     public void SetSprint(bool isSprinting) {
-        if (isSprinting)
-            _currentMaxSpeed = maxSprintSpeed;
-        else
-            _currentMaxSpeed = maxSpeed;
+        _isSprinting = isSprinting;
     }
 
     public bool IsAiming() {
