@@ -46,6 +46,10 @@ public class Character : MonoBehaviour {
 
     public CharacterData Data { get; private set; }
 
+    public Action OnRagdoll;
+    public Action OnStandUp;
+    public Action OnDeath;
+
     private float _currentMaxSpeed = 0f;
     private float _desiredSpeed = 0f;
     private Vector3 _desiredDir = Vector3.zero;
@@ -222,6 +226,7 @@ public class Character : MonoBehaviour {
             if (!_animator.IsInTransition(0) && _animator.GetCurrentAnimatorClipInfo(0)[0].clip.name != _currentStandUpClip) {
                 _currentState = CharacterState.Idle;
                 SetAimRigWeightTarget(1f);
+                OnStandUp.Invoke();
             }
         }
         else if (_currentState != CharacterState.Dead) {
@@ -403,6 +408,7 @@ public class Character : MonoBehaviour {
         }
         _elapsedRagdollReset = 0f;
         SetAimRigWeight(0f);
+        OnRagdoll?.Invoke();
     }
 
     public void StandUpFromRagdoll() {
@@ -426,6 +432,7 @@ public class Character : MonoBehaviour {
         }
         else {
             _currentState = CharacterState.Idle;
+            OnStandUp.Invoke();
         }
     }
 
@@ -522,6 +529,7 @@ public class Character : MonoBehaviour {
             _animator.SetLayerWeight(i, 0);
         }
         SetAimRigWeight(0f);
+        OnDeath?.Invoke();
     }
 
     public bool IsDead() {
