@@ -334,13 +334,25 @@ public class Character : MonoBehaviour {
             _currentMaxSpeed = maxSpeed;
     }
 
+    public bool IsAiming() {
+        return _animator.GetBool("Aiming");
+    }
+
     public void SetAim(bool isAiming) {
         _animator.SetBool("Aiming", isAiming);
+    }
+
+    public bool IsFiring() {
+        return _animator.GetBool("Firing");
     }
 
     public void SetFiring(bool isFiring) {
         if (!_isReloading)
             _animator.SetBool("Firing", isFiring);
+    }
+
+    public bool IsReloading() {
+        return _isReloading;
     }
 
     public void DoReload() {
