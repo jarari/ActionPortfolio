@@ -3849,13 +3849,7 @@ MonoBehaviour:
   armLengthMax: 2
   armOffsetXY: {x: 0.4, y: 0}
   marginOnHit: 0.05
-  collisionLayer:
-    serializedVersion: 2
-    m_Bits: 607
   aimDistance: 1000
-  aimLayer:
-    serializedVersion: 2
-    m_Bits: 595
 --- !u!1 &1651797567
 GameObject:
   m_ObjectHideFlags: 0
@@ -10599,9 +10593,6 @@ MonoBehaviour:
   rayYOffset: -0.12
   rayDistance: 0.24
   plantedYOffset: 0.16
-  mask:
-    serializedVersion: 2
-    m_Bits: 64
   ikEnabled: 1
 --- !u!54 &6329867723466079697
 Rigidbody:
@@ -10760,6 +10751,7 @@ MonoBehaviour:
   aimTarget: {fileID: 994405018}
   aimBase: {fileID: 2530180491874757983}
   baseData: {fileID: 11400000, guid: e8e714fd81aac4249b6c2e5a5767e7f8, type: 2}
+  team: 0
   bumper: {fileID: 1003412129}
   aimRig: {fileID: 364135459}
 --- !u!4 &6341119541919156700
@@ -13477,9 +13469,6 @@ MonoBehaviour:
   rayYOffset: -0.12
   rayDistance: 0.24
   plantedYOffset: 0.16
-  mask:
-    serializedVersion: 2
-    m_Bits: 64
   ikEnabled: 1
 --- !u!136 &9068224027836854088
 CapsuleCollider:
@@ -13553,6 +13542,7 @@ MonoBehaviour:
   aimTarget: {fileID: 313833256}
   aimBase: {fileID: 5966521507256381113}
   baseData: {fileID: 11400000, guid: 9ba223977c3ca9443a82394dbf83a150, type: 2}
+  team: 1
   bumper: {fileID: 1354513866}
   aimRig: {fileID: 2029477457}
 --- !u!114 &9068224027836854092
@@ -13567,6 +13557,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 324cf31b1a6a4c643aefc1e45b5af790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  searchDistanceIdle: 15
 --- !u!4 &9080540017626669303
 Transform:
   m_ObjectHideFlags: 0
