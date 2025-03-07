@@ -29,7 +29,7 @@ public class Bullet : MonoBehaviour {
         Vector3 bulletDir = transform.forward;
         ContactPoint cp = collision.GetContact(0);
         ImpactManager.instance.SpawnImpactEffect(cp.point, cp.normal, collision.collider.sharedMaterial);
-        DecalManager.instance.SpawnImpactDecal(cp.point - bulletDir * 0.5f, (bulletDir - cp.normal) / 2f, collision.collider.sharedMaterial, collision.collider.transform);
+        DecalManager.instance.SpawnImpactDecal(cp.point + cp.normal * 0.01f, -cp.normal, collision.collider.sharedMaterial, collision.collider.transform);
 
         if (collision.collider.CompareTag("Character")) {
             Character victim = collision.gameObject.GetComponentInParent<Character>();

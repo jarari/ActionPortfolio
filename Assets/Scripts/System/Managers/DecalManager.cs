@@ -84,6 +84,10 @@ public class DecalManager : MonoBehaviour {
         DecalProjector decal = Pool.Get();
         decal.transform.position = position;
         decal.transform.forward = dir;
+        decal.size = new Vector3(0.2f, 0.2f, 0.2f);
+        decal.pivot = new Vector3(0, 0, 0.1f);
+        decal.uvScale = new Vector2(0.2f, 0.2f);
+        decal.uvBias = new Vector2(0.4f, 0.4f);
         if (material != null && _impactDict.TryGetValue(material, out var mat)) {
             Material matInstance = new(mat);
             decal.material = matInstance;
