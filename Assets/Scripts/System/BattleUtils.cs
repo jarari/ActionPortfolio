@@ -28,4 +28,9 @@ public static class BattleUtils {
             victim.Kill();
         }
     }
+
+    public static bool HasLoS(Vector3 start, Vector3 end) {
+        Vector3 diff = end - start;
+        return Physics.Raycast(start, diff.normalized, diff.magnitude, GameSettings.worldMask);
+    }
 }
