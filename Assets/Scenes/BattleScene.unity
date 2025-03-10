@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: a4b53087e3838cb408db698295d8c12e, type: 2}
 --- !u!1 &27471413
 GameObject:
   m_ObjectHideFlags: 0
@@ -1610,7 +1610,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!64 &933312647
 MeshCollider:
@@ -3660,8 +3660,8 @@ GameObject:
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_NavMeshLayer: 1
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!65 &1516297544
 BoxCollider:
@@ -13447,6 +13447,7 @@ GameObject:
   - component: {fileID: 9068224027836854091}
   - component: {fileID: 9068224027836854092}
   - component: {fileID: 9068224027836854090}
+  - component: {fileID: 9068224027836854093}
   m_Layer: 3
   m_Name: Zombie
   m_TagString: Character
@@ -13530,7 +13531,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 20
   deceleration: 25
-  maxSpeed: 3
+  maxSpeed: 2
   maxSprintSpeed: 4
   rotationSpeed: 12
   movement360: 0
@@ -13557,7 +13558,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 324cf31b1a6a4c643aefc1e45b5af790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  searchDistanceIdle: 15
+  _searchDistance: 10
+--- !u!195 &9068224027836854093
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9068224027836854084}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.3
+  m_Speed: 5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 360
+  m_StoppingDistance: 0.3
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.7
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!4 &9080540017626669303
 Transform:
   m_ObjectHideFlags: 0
