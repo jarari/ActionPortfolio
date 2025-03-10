@@ -119,6 +119,10 @@ public class Character : MonoBehaviour {
         Data = Instantiate(baseData);
     }
 
+    private void OnEnable() {
+        CharacterManager.instance.RegisterCharacter(this);
+    }
+
     private void StoreBoneTransforms(SimpleTransform[] transforms) {
         for (int i = 0; i < _boneTransforms.Length; ++i) {
             transforms[i].Position = _boneTransforms[i].localPosition;
@@ -545,5 +549,10 @@ public class Character : MonoBehaviour {
         }
         SetAimRigWeight(0f);
         OnDeath?.Invoke();
+        CharacterManager.instance.UnregisterCharacter(this);
+    }
+
+    public float GetDistanceFromBumper(Vector3 pos) {
+        return Vector3.Distance(pos, transform.position) - (bumper != null ? bumper.GetComponent<CapsuleCollider>().radius : 0f);
     }
 }
