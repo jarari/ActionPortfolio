@@ -87,6 +87,7 @@ public class Character : MonoBehaviour {
     Animator _animator;
     Weapon _weapon;
     Rigidbody _rigidbody;
+    Transform _headBone;
     Transform _hipsBone;
     CapsuleCollider _collider;
 
@@ -98,6 +99,7 @@ public class Character : MonoBehaviour {
         if (bumper != null) {
             Physics.IgnoreCollision(_collider, bumper.GetComponent<Collider>());
         }
+        _headBone = _animator.GetBoneTransform(HumanBodyBones.Head);
         _hipsBone = _animator.GetBoneTransform(HumanBodyBones.Hips);
         _ragdollRBodies = _hipsBone.GetComponentsInChildren<Rigidbody>();
         _ragdollColliders = _hipsBone.GetComponentsInChildren<Collider>();
@@ -554,5 +556,13 @@ public class Character : MonoBehaviour {
 
     public float GetDistanceFromBumper(Vector3 pos) {
         return Vector3.Distance(pos, transform.position) - (bumper != null ? bumper.GetComponent<CapsuleCollider>().radius : 0f);
+    }
+
+    public Transform GetHips() {
+        return _hipsBone;
+    }
+
+    public Transform GetHead() {
+        return _headBone;
     }
 }
