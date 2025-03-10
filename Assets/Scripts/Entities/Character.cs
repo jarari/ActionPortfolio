@@ -57,6 +57,8 @@ public class Character : MonoBehaviour {
     public Action OnStandUp;
     public Action OnDeath;
     public Action<Character, DamageType, float> OnHit;
+    public Action OnReloadEnd;
+    public Action OnAttackEnd;
 
     private float _currentMaxSpeed = 0f;
     private float _desiredSpeed = 0f;
@@ -121,7 +123,7 @@ public class Character : MonoBehaviour {
         Data = Instantiate(baseData);
     }
 
-    private void OnEnable() {
+    private void Start() {
         CharacterManager.instance.RegisterCharacter(this);
     }
 
@@ -398,11 +400,15 @@ public class Character : MonoBehaviour {
         }
         else if (args[0] == "ReloadEnd") {
             _isReloading = false;
+            OnReloadEnd?.Invoke();
         }
         else if (args[0] == "WeaponFire") {
             if (_weapon != null) {
                 _weapon.FireProjectile(_desiredAimPos);
             }
+        }
+        else if (args[0] == "AttackEnd") {
+            OnAttackEnd?.Invoke();
         }
     }
 
