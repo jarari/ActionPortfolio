@@ -24,7 +24,7 @@ public static class BattleUtils {
             return;
         victim.NotifyOnHit(attacker, type, damage);
         victim.Data.stats.CurrentHP -= damage;
-        if (victim.Data.stats.CurrentHP <= 0) {
+        if (victim.IsDead == false && victim.Data.stats.CurrentHP <= 0) {
             victim.Kill();
         }
     }
